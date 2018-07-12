@@ -1,0 +1,276 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+\lstdefinelanguage{Json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+\begin{document}
+
+\title{JadePix DAQ user guide}
+
+\author{IHEP, CAS, China \\
+\small{Version 0,1}
+}
+
+\tableofcontents
+
+\section{Compiling and installation}
+\label{compiling-and-installation}
+
+\emph{cmake} will configure the installation and prepare the makefiles.
+It searches for all the required files. As a standard, it is executed in
+the \emph{build} folder.
+
+\subsection{Quick installation for UNIX/LINUX}
+
+\begin{lstlisting}[language=Bash]
+git clone https://github.com/cepc/kc705.git
+mkdir -p build
+cmake ..
+make install -j N
+\end{lstlisting}
+
+\subsection{Use for radioactive experiments}
+\label{use-for-radioactive-experiments}
+
+\begin{lstlisting}[language=Bash]
+cd kc705 
+git checkout v1.x
+cd build
+cmake ..
+make install -j N
+\end{lstlisting}
+
+\subsection{Use for beam tests}
+\label{use-for-beam-tests}
+
+\begin{lstlisting}[language=Bash]
+cd kc705 
+git checkout master
+cd build
+cmake ..
+make install -j N
+\end{lstlisting}
+
+After installation, the folder \emph{bin} and \emph{lib} will be installed in
+kc705 directory. In directory of bin, there are the following exe programs.
+
+\begin{itemize}
+	\item
+	      \emph{SystemTest} are used for data acquring with json configuration.
+	\item
+	      \emph{ManagterTest} are used for data acquring without json configuration.
+	\item
+	      \emph{OptionTest} are used for json debug.
+	\item
+	      \emph{ReaderTest} are used for read test of DAQ.
+	\item
+		\emph{dd.exe}, \emph{memread.exe}, \emph{streamread.exe}, \emph{memwrite.exe} 
+		and streamwrite.exe are coppied from Xilinx company, which are used for firmware 
+		debug.
+\end{itemize}
+
+\subsection{Advaned installation for UNIX/LINUX}
+\label{advaned-installation-for-unixlinux}
+
+cmake has several options (\texttt{cmake\ -D\ OPTION=ON/OFF}) to
+activate or deactivate programs which will be built. For advanced use,
+cmake-gui/ccmake will help to make selection visiable.
+
+The following prints the options.
+
+\begin{itemize}
+	\item
+	      JADE\_BUILD\_CORE\_PYBIND
+	\item
+	      JADE\_BUILD\_LEGACY\_CORE\_PYTHON
+	\item
+	      JADE\_BUILD\_GUI
+\end{itemize}
+
+\section{Run examples}
+\label{run-examples}
+
+\subsection{Run and configure}
+\label{run-and-configure}
+
+User input command SystemTest\ -c\ kc705/software/conf/sample.json will start data
+taking. The json file is the configuration of the JadePixDAQ.
+
+\begin{lstlisting}[language=Json]
+	{
+		"System":"JadeCore",
+		"JadeCore":{
+		  "JadeManager":{
+		    "type":"default",
+		    "parameter":{
+			"SecPerLoop": 10,
+			"N_Loops": 3,
+			"ChipAddress": "CHIPA1"
+		    }
+		  },
+		  "JadeRead":{
+		    "type":"default",
+		    "parameter":{
+			"PATH":"//./xillybus_read_32"
+		    }
+		  },
+		  "JadeWrite":{
+		    "type":"default",
+		    "parameter":{
+			"PATH":"F:\\data\\output",
+			"DISABLE_FILE_WRITE":false
+		    }
+		  },
+		  "JadeFilter":{
+		    "type":"default",
+		    "parameter":{
+			"something": "somthing"
+		    }
+		  },
+		  "JadeMonitor":{
+		    "type":"default",
+		    "parameter":{
+			"PRINT_EVENT_N":40000,
+			"PRINT_EVENT_DISCONTINUOUS":true
+		    }
+		  },
+		  "JadeRegCtrl":{
+		    "type":"default",
+		    "parameter":{
+			"PATH":"//./xillybus_mem_8",
+			"command_list":{
+			  "RESET":{
+			    "address":1,
+			    "default_val":15
+			  },
+			  "SET":{
+			    "address":2,
+			    "default_val":10
+			  },
+			  "START":{
+			    "address":3,
+			    "default_val":15
+			  },
+			  "STOP":{
+			    "address":4,
+			    "default_val":15
+			  },
+			  "CHIPA1":{
+			    "address":8,
+			    "default_val":0
+			  },
+			  "CHIPA2":{
+			    "address":8,
+			    "default_val":1
+			  },
+			  "CHIPA3":{
+			    "address":8,
+			    "default_val":2
+			  },
+			  "CHIPA4":{
+			    "address":8,
+			    "default_val":3
+			  },
+			  "CHIPA5":{
+			    "address":8,
+			    "default_val":4
+			  },
+			  "CHIPA6":{
+			    "address":8,
+			    "default_val":5
+			  },
+			  "CHIPA7":{
+			    "address":8,
+			    "default_val":6
+			  },
+			  "CHIPA8":{
+			    "address":8,
+			    "default_val":7
+			  },
+			  "CHIPA9":{
+			    "address":8,
+			    "default_val":8
+			  },
+			  "CHIPA10":{
+			    "address":8,
+			    "default_val":9
+			  }
+			},
+			"status_list":{
+			  "FIFO_MODE":{
+			    "address":16,
+			    "value_list":{
+				"NOT_FULL":0,
+				"FULL":1
+			    }
+			  },
+			  "RUN_MODE":{
+			    "address":16,
+			    "value_list":{
+				"STOPPED":0,
+				"STARTED":1
+			    }
+			  }
+			}
+		    }
+		  }
+		}
+	    }
+\end{lstlisting}
+
+As the above shows, the JadeCore is the system, which has servaral
+sections. 
+\begin{itemize}
+\item{
+	\emph{JadeRead}: the PATH means the device in PC of kc705 FPGA
+board. In Linux, it is /dev/xillybus\_read\_32}
+\item{JadeWrite: te PATH
+means the output raw data file. User has no worry about overwriting the
+file, since the output file will has time suffix.} 
+\item{
+	\emph{JadeMonitor}: the
+PRINT\_EVENT\_N is the number to print frames.
+PRINT\_EVENT\_DISCONTINUOUS is the monitor of data continuous. It should
+be true in radioactive test, which false in beam tests.}
+\item{
+	\emph{JadeRegCtrl}:
+the PATH means the device in PC of kc705 to confugre register. it is
+/dev/xillybus\_mem\_8 in Linux. Other parameters are the command lists
+of register. For more information, please browse the link
+https://github.com/cepc/kc705/blob/v1.2/doc/Firmware\_v1.2\_Info.md.}
+
+
+\end{document}
