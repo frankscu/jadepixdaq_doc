@@ -1,50 +1,46 @@
 \documentclass[12pt,a4paper]{article}
 
 \usepackage{amsmath}
-\usepackage{listings}
-\usepackage{xcolor}
 \usepackage{graphicx}
-\usepackage{geometry}
-\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\usepackage{hyperref}
 
-\lstdefinelanguage{Json}{
-    basicstyle=\normalfont\ttfamily,
-    numbers=left,
-    numberstyle=\scriptsize,
-    stepnumber=1,
-    numbersep=8pt,
-    showstringspaces=false,
-    breaklines=true,
-    frame=lines,
-    backgroundcolor=\color{background},
-    literate=
-     *{0}{{{\color{numb}0}}}{1}
-      {1}{{{\color{numb}1}}}{1}
-      {2}{{{\color{numb}2}}}{1}
-      {3}{{{\color{numb}3}}}{1}
-      {4}{{{\color{numb}4}}}{1}
-      {5}{{{\color{numb}5}}}{1}
-      {6}{{{\color{numb}6}}}{1}
-      {7}{{{\color{numb}7}}}{1}
-      {8}{{{\color{numb}8}}}{1}
-      {9}{{{\color{numb}9}}}{1}
-      {:}{{{\color{punct}{:}}}}{1}
-      {,}{{{\color{punct}{,}}}}{1}
-      {\{}{{{\color{delim}{\{}}}}{1}
-      {\}}{{{\color{delim}{\}}}}}{1}
-      {[}{{{\color{delim}{[}}}}{1}
-      {]}{{{\color{delim}{]}}}}{1},
+\usepackage{listings}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{color}
+\lstset{
+	basicstyle=\footnotesize\ttfamily,
+	numbers=left,
+	keywordstyle=\color{blue},
+	numberstyle={\tiny\color{black}},
+	numbersep=5pt,
+	commentstyle=\small\color{red},
+	backgroundcolor=\color{lightgray},
+	showspaces=false,
+	showtabs=false,
+	frame=single,
+	framexleftmargin=5mm,
+	rulesepcolor=\color{red!20!green!20!blue!20},
+	tabsize=4,
+	breaklines=true,
+	extendedchars=false
 }
-
-\begin{document}
 
 \title{JadePix DAQ user guide}
 
 \author{IHEP, CAS, China \\
-\small{Version 0,1}
+	\small{Version 0,1}
 }
 
+\begin{document}
+
+\maketitle
+
+\newpage
+
 \tableofcontents
+
+\newpage
 
 \section{Compiling and installation}
 \label{compiling-and-installation}
@@ -87,7 +83,7 @@ make install -j N
 After installation, the folder \emph{bin} and \emph{lib} will be installed in
 kc705 directory. In directory of bin, there are the following exe programs.
 
-\begin{itemize}
+\begin{enumerate}
 	\item
 	      \emph{SystemTest} are used for data acquring with json configuration.
 	\item
@@ -97,10 +93,10 @@ kc705 directory. In directory of bin, there are the following exe programs.
 	\item
 	      \emph{ReaderTest} are used for read test of DAQ.
 	\item
-		\emph{dd.exe}, \emph{memread.exe}, \emph{streamread.exe}, \emph{memwrite.exe} 
-		and streamwrite.exe are coppied from Xilinx company, which are used for firmware 
-		debug.
-\end{itemize}
+	      \emph{dd.exe}, \emph{memread.exe}, \emph{streamread.exe}, \emph{memwrite.exe} \\
+				and \emph{streamwrite.exe} are coppied from Xilinx company. \\ These are the commands 
+				to use for firmware debug.
+\end{enumerate}
 
 \subsection{Advaned installation for UNIX/LINUX}
 \label{advaned-installation-for-unixlinux}
@@ -111,14 +107,14 @@ cmake-gui/ccmake will help to make selection visiable.
 
 The following prints the options.
 
-\begin{itemize}
+\begin{enumerate}
 	\item
 	      JADE\_BUILD\_CORE\_PYBIND
 	\item
 	      JADE\_BUILD\_LEGACY\_CORE\_PYTHON
 	\item
 	      JADE\_BUILD\_GUI
-\end{itemize}
+\end{enumerate}
 
 \section{Run examples}
 \label{run-examples}
@@ -129,7 +125,7 @@ The following prints the options.
 User input command SystemTest\ -c\ kc705/software/conf/sample.json will start data
 taking. The json file is the configuration of the JadePixDAQ.
 
-\begin{lstlisting}[language=Json]
+\begin{lstlisting}
 	{
 		"System":"JadeCore",
 		"JadeCore":{
@@ -248,29 +244,28 @@ taking. The json file is the configuration of the JadePixDAQ.
 		    }
 		  }
 		}
-	    }
+			}
 \end{lstlisting}
 
 As the above shows, the JadeCore is the system, which has servaral
-sections. 
-\begin{itemize}
-\item{
-	\emph{JadeRead}: the PATH means the device in PC of kc705 FPGA
-board. In Linux, it is /dev/xillybus\_read\_32}
-\item{JadeWrite: te PATH
-means the output raw data file. User has no worry about overwriting the
-file, since the output file will has time suffix.} 
-\item{
-	\emph{JadeMonitor}: the
-PRINT\_EVENT\_N is the number to print frames.
-PRINT\_EVENT\_DISCONTINUOUS is the monitor of data continuous. It should
-be true in radioactive test, which false in beam tests.}
-\item{
-	\emph{JadeRegCtrl}:
-the PATH means the device in PC of kc705 to confugre register. it is
-/dev/xillybus\_mem\_8 in Linux. Other parameters are the command lists
-of register. For more information, please browse the link
-https://github.com/cepc/kc705/blob/v1.2/doc/Firmware\_v1.2\_Info.md.}
+sections.
+\begin{enumerate}
+	\item{
+	      \textbf{JadeRead}: the PATH means the device in PC of kc705 FPGA
+	      board. In Linux, it is /dev/xillybus\_read\_32}
+	\item{\textbf{JadeWrite}: the PATH
+	      means the output raw data file. User has no worry about overwriting the
+	      file, since the output file will has time suffix.}
+	\item{
+	      \textbf{JadeMonitor}: the PRINT\_EVENT\_N is the number of print frames. \\
+	      PRINT\_EVEN\_DISCONTINUOUS is the monitor of data continuous. It should
+	      be true in radioactive test, which false in beam tests.}
+	\item{
+				\textbf{JadeRegCtrl}: the PATH means the device in PC of kc705 to confugre registers. \\ 
+				It is /dev/xillybus\_mem\_8 in Linux. Other parameters are the command lists
+				of register. For more information, please browse the link \href{
+	      https://github.com/cepc/kc705/blob/v1.2/doc/Firmware\_v1.2\_Info.md}{firmware mannaul}}
+\end{enumerate}
 
 
 \end{document}
